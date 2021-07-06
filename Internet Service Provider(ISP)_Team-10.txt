@@ -1,0 +1,164 @@
+Team - 10
+
+Topic - Create a database for ISP(Internet Service Provider)
+
+Name - 102_Saurabh Suresh Jadhav_KH
+             103_Sayali Prashant Badgujar_KH	
+-------------------------------------------------------------
+create database isp;
+use isp;
+
+
+
+# Create a table for service provider
+
+
+create table SERVICEPROVIDER(SERVICE_PROVIDER_NUMBER INT PRIMARY KEY AUTO_INCREMENT, SERVICE_PROVIDER_NAME VARCHAR(50),RATING int);
+insert into serviceprovider values (1001 , "AIRTEL",5);
+insert into serviceprovider (SERVICE_PROVIDER_NAME,RATING) 
+values('Reliance Jio Fiber',4) , ('Excitel Broadband' ,4);
+
+alter table serviceprovider modify rating float;
+
+insert into serviceprovider (SERVICE_PROVIDER_NAME,RATING) 
+values('BSNL',4) , ('Hathway’s Broadband' ,3.5),('ACT Fibernet Broadband' , 3),('You Broadband', 3.5) ,("Tikona Broadband", 2);
+
+ insert into serviceprovider (SERVICE_PROVIDER_NAME,RATING) values ('Spectra Broadband Plan' , 2.5) , ('Gigatel', 4 );
+select * from serviceprovider;
+--------------------------------------------------------------
+# Sort the table by rating
+
+delimiter //
+create procedure best_service_provider ()
+begin
+select * from serviceprovider where rating >3;
+end;//
+
+call best_service_provider();
+
+
+select * from serviceprovider;
+
+ALTER TABLE SERVICEPROVIDER
+RENAME COLUMN rating to RATING;
+
+----------------------------------------------------------------
+
+# Create a table to display the plan details
+
+CREATE TABLE BEST_ISP_IN_YOUR_CITY (PACKAGE_NO VARCHAR(10) PRIMARY KEY NOT NULL, SERVICE_PROVIDER_NO INT NOT NULL,
+SERVICE_PROVIDER_NAME VARCHAR(50), DURTION VARCHAR(50) NOT NULL, PRICE INT NOT NULL );
+ 
+ALTER TABLE BEST_ISP_IN_YOUR_CITY
+ADD FOREIGN KEY (SERVICE_PROVIDER_NO) REFERENCES SERVICEPROVIDER (SERVICE_PROVIDER_NUMBER);
+
+insert into BEST_ISP_IN_YOUR_CITY (package_no , service_provider_no , service_provider_name , DURTION  ,PRICE)
+values ('P1' , 1 , 'AIRTEL', '6 Months', 4500),('P2' , 1 , 'AIRTEL', '12 Months', 8500),('P3' , 2 , 'Reliance Jio Fiber', '6 Months', 4300),('P4' , 2 , 'Reliance Jio Fiber', '12 Months', 8300),
+('P5' , 3 , 'Excitel Broadband', '6 Months', 4000),('P6' , 3 , 'Excitel Broadbandr', '12 Months', 8000),('P7' , 4 , 'BSNL', '6 Months', 3600),('P8' , 4 , 'BSNL', '12 Months', 7000),
+('P9' , 5 , 'Hathway’s Broadband', '6 Months', 3000) ,('P10' , 5 , 'Hathway’s Broadband', '12 Months', 6000) , ('P11' , 6 , 'ACT Fibernet Broadband', '6 Months', 2500) ,
+('P12' , 6 , 'ACT Fibernet Broadband', '12 Months', 5000) , ('P13' , 7 , 'You Broadband', '6 Months', 3500) , ('P14' , 7 , 'You Broadband', '12 Months', 6500) ,
+('P15' , 8 , 'Tikona Broadband', '6 Months', 4000) , ('P16' , 8 , 'Tikona Broadband', '12 Months', 7500) , ('P17' , 9 , 'Spectra Broadband Plan', '6 Months', 2000) , 
+('P18' , 9 , 'Spectra Broadband Plan', '12 Months', 4000) , ('P19' , 10 , 'Gigatel', '6 Months', 2500) , ('P20' , 10 , 'Gigatel', '12 Months', 5000);
+
+drop table  BEST_ISP_IN_YOUR_CITY;
+------------------------------------------------------------------------------
+
+# Create table for customer details
+CREATE TABLE CUSTOMER_DETAILS(CUSTOMER_CODE INT PRIMARY KEY NOT NULL AUTO_INCREMENT,CUSTOMER_NAME VARCHAR(50) NOT NULL,PHONE_NUMBER NUMERIC(25) NOT NULL,CITY VARCHAR(50) NOT NULL,
+ PACKAGE_NO VARCHAR(10) NOT NULL,TOTAL INT NOT NULL,PAYMENT_ID INT NOT NULL);
+ --------------------------------------------------------------------------------
+ 
+# Trigger
+
+create table New_Connection 
+(ID  int primary key auto_increment , DISCRIPTION varchar(500) );
+
+delimiter //
+create trigger Tr_Before
+before insert
+on customer_details for each row
+begin
+	insert into New_Connection values (null , concat( 'A NEW CUSTOMER IS ENROLLED AT ', DATE_FORMAT(NOW(),'%D-%M-%Y %H:%I:%S:%P') ));
+end; //
+delimiter ;
+select * from New_Connection ;
+ 
+ ------------------------------------------------------------------------------------
+ insert into CUSTOMER_DETAILS (CUSTOMER_CODE ,CUSTOMER_NAME,PHONE_NUMBER ,CITY,
+ PACKAGE_NO,TOTAL ,PAYMENT_ID) values (101 , 'Sayali Badgujar' ,7738302215,'Mumbai','P4',9794,10001),(NULL,'Saurabh Jadhav',9049131045,'Satara','P1',5310,10002),
+ (NULL,'Sarang Sonawane',9632145780,'Thane','P4',9877,10003) , (NULL,'Sanskruti Urunkar',7456102215,'Andheri','P2',10115,10004) , (NULL,'Shahbaz Ahamed ',7738555215,'Vasai','P1',5310,10005),
+ (NULL,'Shikha Dongare',9988302215,'Vashi','P8',7735,10006) , (NULL,'Sarika Gholap',99825302215,'Pune','P2',10115,10007) , (NULL,'Saurabh Jojare',768123456,'Nashik','P9',5355,10008) ,
+ (NULL,'Saurabh Chavan ',7612345890,'Thane','P7',4165,10009) , (NULL,'Saurabh Kapgate',7612345890,'Thane','P15',4165,10009) ;
+ 
+ select * from CUSTOMER_DETAILS;
+ 
+
+ 
+ 
+SET FOREIGN_KEY_CHECKS=0; -- to disable the foreign key constraint
+SET FOREIGN_KEY_CHECKS=1; -- to enable the foreign key constraint
+ --------------------------------------------------------------------------------
+# customer complaint
+
+create table Customer_Complaint(Complaint_Id int primary key not null auto_increment,CUSTOMER_CODE int,Customer_Issue varchar(50) );
+
+
+Insert into Customer_Complaint (Complaint_Id ,CUSTOMER_CODE ,Customer_Issue)
+values(1001,105,'Link Down'),(null,101,'Speed Issue'),(null,105,'Link Down'),(null,108,'Link Down'),(null,110,'Speed Issue');
+
+alter table Customer_Complaint add foreign key (CUSTOMER_CODE) 
+references CUSTOMER_DETAILS(CUSTOMER_CODE);
+show tables;
+
+desc Customer_Complaint;
+
+
+
+
+--------------------------------------------------------------------------------
+# All tables from ISP 
+
+select * from best_isp_in_your_city;
+select * from customer_complaint;
+select * from customer_details;
+select * from serviceprovider;
+
+
+------------------------------------------------------------------------------
+# Join 
+
+
+-- Display Package no , Service Provider Name , Customer Name , Phone Number , City 
+
+select rownum ,best_isp_in_your_city .PACKAGE_NO , SERVICE_PROVIDER_NAME , CUSTOMER_NAME , PHONE_NUMBER , CITY 
+from best_isp_in_your_city , customer_details 
+where best_isp_in_your_city.PACKAGE_NO = customer_details.PACKAGE_NO;
+
+-------------------------------------------------------------------------------------
+
+# Subquery
+select * from best_isp_in_your_city;
+select * from customer_complaint;
+select * from customer_details;
+select * from serviceprovider;
+
+-- Display 1st high rating 
+
+select SERVICE_PROVIDER_NAME,max(rating) from serviceprovider;
+
+-- Display 2nd high rating 
+
+select SERVICE_PROVIDER_NAME, max(rating) from serviceprovider where RATING <
+(select max(RATING) from serviceprovider);
+
+-- Display 3rd High rating 
+
+select * from serviceprovider order by '3rd High'  limit 3 , 1;
+
+-- Display service provider name , duration , price where rating is 5
+
+select SERVICE_PROVIDER_NAME , DURTION , PRICE from best_isp_in_your_city where SERVICE_PROVIDER_NAME in   
+(select SERVICE_PROVIDER_NAME  from serviceprovider where rating = 5);
+
+
+----------------------------------------------------------------------------------
